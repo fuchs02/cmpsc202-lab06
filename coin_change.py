@@ -4,12 +4,21 @@ import matplotlib.pyplot as plt
 def coin_change_recursive(coins, amount):
     if amount == 0:
         return 0
-    
-    for coin in reversed(coins):
-        if coin <= amount:
-                return 1 + coin_change_recursive(coins, amount - coin)
 
-    return None
+    if amount < 0:
+        return float("inf")
+
+    minimum = amount + 1
+
+    for coin in coins:
+        if coin <= amount:
+            coins_needed = 1 + coin_change_recursive(
+                coins, amount - coin
+            )
+            minimum = min(minimum, coins_needed)
+
+    return minimum
+
 
 # amount = 11
 # coins = [1, 2, 5]
@@ -20,16 +29,24 @@ def coin_change_memoized(coins, amount, memo):
     if amount == 0:
         return 0
 
-    elif amount in memo:
-         return memo[amount]
+    if amount < 0:
+        return float("inf")
+
+    if amount in memo:
+        return memo[amount]
+
+    minimum = amount + 1
     
-    for coin in reversed(coins):
+    for coin in coins:
         if coin <= amount:
-            num = 1 + coin_change_recursive(coins, amount - coin)
-            memo[amount] = num
-            return num
+            coins_needed = 1 + coin_change_memoized(
+                coins, amount - coin, memo
+            )
+            minimum = min(minimum, coins_needed)
+
+    memo[amount] = minimum
+    return minimum
         
-    return None
 
 # amount = 11
 # coins = [1, 2, 5]
@@ -56,7 +73,8 @@ def coin_change_dp(coins, amount):
 
 
 def main():
-    tests = [100, 200, 400, 800, 1600] #each are mupltipled by 2
+    # Keep inputs small because the naive recursive algorithm is exponential.
+    tests = [5, 10, 15]
     coins = [1,2,5]
     memo = {0:0}
     benchmark_times = []
