@@ -74,7 +74,7 @@ def coin_change_dp(coins, amount):
 
 def main():
     # Keep inputs small because the naive recursive algorithm is exponential.
-    tests = [5, 10, 15]
+    tests = [x for x in range(1,16)]
     coins = [1,2,5]
     memo = {0:0}
     benchmark_times = []
